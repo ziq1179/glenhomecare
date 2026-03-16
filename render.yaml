@@ -1,0 +1,19 @@
+# Render Blueprint: run the website as one app (API + site + Neon)
+# Add DATABASE_URL, ADMIN_PASSWORD, API_SECRET in the Render dashboard → Environment.
+
+services:
+  - type: web
+    name: glens-home-app
+    runtime: node
+    rootDir: .
+    buildCommand: cd server && npm install
+    startCommand: cd server && node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: "18"
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: API_SECRET
+        generateValue: true

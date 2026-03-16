@@ -1,0 +1,19 @@
+{
+  "name": "glens-home-api",
+  "version": "1.0.0",
+  "description": "API and admin backend for Glens Residential Home website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "@neondatabase/serverless": "^0.9.0"
+  }
+}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reviews and testimonials from families and residents at Glens Residential Home, Cushendall. Share your experience.">
+  <title>Reviews | Glens Residential Home</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo"><img src="images/logo.svg" alt="Glens Residential Home" width="180" height="54"></a>
+      <button type="button" class="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+      <nav class="nav-main" aria-label="Main navigation">
+        <ul class="nav-main-list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="our-services.html">Our Services</a></li>
+          <li><a href="life-at-the-glens.html">Life at the Glens</a></li>
+          <li><a href="meet-the-team.html">Meet the Team</a></li>
+          <li><a href="reviews.html">Reviews</a></li>
+          <li><a href="contact-faq.html">Contact & FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div class="main-content">
+      <header class="page-header">
+        <h1 class="page-title">Reviews</h1>
+        <p class="page-intro">Hear from families and friends about their experience of Glens Residential Home. Your feedback helps others and helps us keep improving.</p>
+        <a href="reviews.html#share" class="btn btn-cta">Share your review</a>
+      </header>
+
+      <section class="section">
+        <h2 class="section-title">What families say</h2>
+        <div class="review-list">
+          <article class="review-card">
+            <div class="review-rating" aria-label="Rated 5 out of 5">
+              <span aria-hidden="true">★★★★★</span>
+            </div>
+            <blockquote class="review-quote">
+              <p>We couldn’t be happier with the care our mother receives. The staff are kind, patient, and nothing is too much trouble. It really does feel like a family.</p>
+            </blockquote>
+            <footer class="review-author">— Family member</footer>
+          </article>
+          <article class="review-card">
+            <div class="review-rating" aria-label="Rated 5 out of 5">
+              <span aria-hidden="true">★★★★★</span>
+            </div>
+            <blockquote class="review-quote">
+              <p>The home is always spotless and the meals are lovely. Dad has settled in so well and enjoys the activities and the garden. Thank you to everyone at the Glens.</p>
+            </blockquote>
+            <footer class="review-author">— Son of resident</footer>
+          </article>
+          <article class="review-card">
+            <div class="review-rating" aria-label="Rated 5 out of 5">
+              <span aria-hidden="true">★★★★★</span>
+            </div>
+            <blockquote class="review-quote">
+              <p>After visiting several homes, we knew straight away that the Glens was the right place. The manager and team go above and beyond. We’re so grateful.</p>
+            </blockquote>
+            <footer class="review-author">— Daughter of resident</footer>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="share">
+        <h2 class="section-title">Share your review</h2>
+        <p>If you’re a family member, friend, or advocate of someone at Glens Residential Home, we’d love to hear about your experience. Your review may be published on this page (with your permission) to help other families.</p>
+        <form id="review-form" class="contact-form" action="#" method="post" novalidate>
+          <div class="form-group">
+            <label for="review-name">Your name (as you’d like it shown) <span aria-hidden="true">*</span></label>
+            <input type="text" id="review-name" name="name" required autocomplete="name" placeholder="e.g. Margaret T.">
+          </div>
+          <div class="form-group">
+            <label for="review-relationship">Your relationship <span aria-hidden="true">*</span></label>
+            <select id="review-relationship" name="relationship" required aria-describedby="relationship-desc">
+              <option value="">Select…</option>
+              <option value="family">Family member</option>
+              <option value="friend">Friend</option>
+              <option value="advocate">Advocate</option>
+              <option value="other">Other</option>
+            </select>
+            <span id="relationship-desc" class="visually-hidden">How you are connected to the resident.</span>
+          </div>
+          <div class="form-group">
+            <label>Rating (optional)</label>
+            <div class="rating-input" role="group" aria-label="Rate your experience">
+              <label class="rating-star"><input type="radio" name="rating" value="1" aria-label="1 star"> <span>★</span></label>
+              <label class="rating-star"><input type="radio" name="rating" value="2" aria-label="2 stars"> <span>★</span></label>
+              <label class="rating-star"><input type="radio" name="rating" value="3" aria-label="3 stars"> <span>★</span></label>
+              <label class="rating-star"><input type="radio" name="rating" value="4" aria-label="4 stars"> <span>★</span></label>
+              <label class="rating-star"><input type="radio" name="rating" value="5" aria-label="5 stars"> <span>★</span></label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="review-text">Your review <span aria-hidden="true">*</span></label>
+            <textarea id="review-text" name="review" required placeholder="Tell others about your experience…" minlength="20"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="publish" value="yes" aria-describedby="publish-desc">
+              <span>I’m happy for my review to be published on this website (we may edit for length or clarity).</span>
+            </label>
+            <span id="publish-desc" class="visually-hidden">Optional. If unchecked, we will still read your feedback but won’t publish it.</span>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="privacy" required aria-describedby="review-privacy-desc">
+              <span>I have read and agree to the <a href="privacy.html">Privacy Policy</a>. <span aria-hidden="true">*</span></span>
+            </label>
+            <span id="review-privacy-desc" class="visually-hidden">You must agree to the privacy policy to submit.</span>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit review</button>
+        </form>
+        <p id="review-form-status" class="form-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="section text-center">
+        <p>You can also leave a review on our <a href="https://www.google.com/maps/search/63+Middlepark+Road,+Cushendall,+Ballymena,+BT44+0SQ" target="_blank" rel="noopener noreferrer">Google listing</a> or contact us directly.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div><strong>Glens Residential Home</strong><br>63 Middlepark Road, Cushendall, Ballymena BT44 0SQ</div>
+      <div><a href="tel:02821771396">028 2177 1396</a><br><a href="contact-faq.html">Contact & FAQ</a></div>
+      <div><a href="privacy.html">Privacy Policy</a></div>
+    </div>
+    <div class="footer-bottom footer-inner">Glens Properties LLP (McKillop Family). Regulated by RQIA.</div>
+  </footer>
+
+  <div class="sticky-cta" aria-hidden="true">
+    <a href="tel:02821771396" class="btn btn-cta">Call Us</a>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

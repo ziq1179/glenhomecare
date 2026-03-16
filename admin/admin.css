@@ -1,0 +1,29 @@
+* { box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; margin: 0; background: #f9fafb; color: #1f2937; padding: 1rem; }
+.page { max-width: 900px; margin: 0 auto; }
+.login-box { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-top: 3rem; }
+.login-box h1 { margin-top: 0; }
+.login-box label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+.login-box input { width: 100%; padding: 0.5rem 0.75rem; font-size: 1rem; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 1rem; }
+.login-box .btn { margin-top: 0.5rem; }
+.error { color: #b91c1c; margin-top: 0.5rem; }
+.admin-header { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.admin-header h1 { margin: 0; font-size: 1.5rem; }
+.admin-role { font-size: 0.9rem; color: #6b7280; padding: 0.25rem 0.5rem; background: #f3f4f6; border-radius: 4px; }
+.admin-header a { color: #0284c7; }
+.readonly-note { background: #fef3c7; padding: 0.75rem; border-radius: 6px; color: #92400e; }
+.btn { padding: 0.5rem 1rem; font-size: 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+.btn-primary { background: #1e5a8e; color: #fff; }
+.btn-secondary { background: #e5e7eb; color: #1f2937; }
+.hint { color: #6b7280; margin-bottom: 1.5rem; }
+.admin-main { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.slot { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb; }
+.slot:last-of-type { border-bottom: none; }
+.slot label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+.slot .slot-key { font-size: 0.8rem; color: #6b7280; font-family: monospace; }
+.slot input[type="url"], .slot input[type="text"] { width: 100%; padding: 0.5rem 0.75rem; font-size: 1rem; border: 1px solid #e5e7eb; border-radius: 6px; }
+.slot .preview { margin-top: 0.5rem; }
+.slot .preview img { max-width: 200px; max-height: 120px; object-fit: cover; border-radius: 4px; }
+.status { margin-top: 1rem; font-weight: 500; }
+.status.success { color: #16a34a; }
+.status.error { color: #b91c1c; }

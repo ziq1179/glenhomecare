@@ -1,0 +1,13 @@
+{
+  "name": "glens-residential-home",
+  "version": "1.0.0",
+  "description": "Glens Residential Home website and admin app (Neon + API)",
+  "private": true,
+  "scripts": {
+    "start": "cd server && node server.js",
+    "install:server": "cd server && npm install"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

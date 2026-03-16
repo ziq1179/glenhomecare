@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <path d="M20 10 L20 50 L35 35 L50 50 L50 10" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
+  <text x="65" y="38" fill="currentColor" font-family="sans-serif" font-size="22" font-weight="700">Glens</text>
+  <text x="65" y="52" fill="currentColor" font-family="sans-serif" font-size="12" font-weight="500">Residential Home</text>
+</svg>

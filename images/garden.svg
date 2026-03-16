@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#9bb896"/>
+  <ellipse cx="200" cy="380" rx="80" ry="40" fill="#7d9b76"/>
+  <ellipse cx="400" cy="350" rx="100" ry="50" fill="#5a7354"/>
+  <ellipse cx="600" cy="380" rx="80" ry="40" fill="#7d9b76"/>
+  <circle cx="400" cy="200" r="60" fill="#87ceeb"/>
+  <path d="M350 200 Q400 120 450 200" stroke="#7d9b76" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <text x="400" y="260" text-anchor="middle" fill="#2c3e2c" font-family="sans-serif" font-size="18" font-weight="500">Garden  Add your photo</text>
+</svg>

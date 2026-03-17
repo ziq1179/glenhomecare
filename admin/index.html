@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin – Glens Residential Home</title>
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
@@ -28,6 +29,21 @@
       <button type="button" id="logout-btn" class="btn btn-secondary">Log out</button>
     </header>
     <main class="admin-main">
+      <section class="admin-section" aria-labelledby="theme-heading">
+        <h2 id="theme-heading">Site theme</h2>
+        <p class="hint">Choose the look of the public website. Only Super Admin and Editor can change this.</p>
+        <div class="theme-row">
+          <label for="site-theme">Theme</label>
+          <select id="site-theme" aria-describedby="theme-hint">
+            <option value="original">Original (blue header &amp; footer, green buttons)</option>
+            <option value="care-uk">Care UK style (white header, green/teal, dark footer)</option>
+          </select>
+          <button type="button" id="save-theme-btn" class="btn btn-secondary">Save theme</button>
+        </div>
+        <p id="theme-status" class="status" role="status" aria-live="polite"></p>
+      </section>
+      <section class="admin-section" aria-labelledby="photos-heading">
+        <h2 id="photos-heading">Photo URLs</h2>
       <p id="readonly-note" class="hint readonly-note" hidden>You are logged in as <strong>Viewer</strong>. You can see the current photos but cannot change them. Use a different role to edit.</p>
       <p class="hint">Paste the full image URL for each slot (e.g. from Imgur, Cloudinary, or your host). Leave blank to use the site default.</p>
       <form id="photos-form">
@@ -35,6 +51,7 @@
         <button type="submit" class="btn btn-primary">Save all</button>
       </form>
       <p id="save-status" class="status" role="status" aria-live="polite"></p>
+      </section>
     </main>
   </div>
 

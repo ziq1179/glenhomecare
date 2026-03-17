@@ -1,0 +1,81 @@
+/**
+ * Care UK–style theme overrides.
+ * Loaded only when site theme is set to "care-uk" (admin choice).
+ * Overrides :root and key components for white header, green/teal primary, dark footer.
+ */
+
+[data-theme="care-uk"] {
+  --primary: #00AD93;
+  --primary-hover: #009580;
+  --primary-dark: #007a6b;
+  --accent: #EEB619;
+  --accent-hover: #d9a316;
+  --bg-body: #ffffff;
+  --bg-content: #ffffff;
+  --link: #00AD93;
+  --link-hover: #009580;
+  --border: #e8e8e8;
+  --border-light: #f5f5f5;
+}
+
+/* Header – white bar, dark nav */
+[data-theme="care-uk"] .site-header {
+  background: var(--white);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+[data-theme="care-uk"] .site-header .logo,
+[data-theme="care-uk"] .site-header .logo span {
+  color: var(--primary);
+}
+
+[data-theme="care-uk"] .nav-main-list a {
+  color: var(--text);
+}
+
+[data-theme="care-uk"] .nav-main-list a:hover {
+  color: var(--primary);
+}
+
+[data-theme="care-uk"] .menu-toggle {
+  color: var(--text);
+}
+
+@media (max-width: 768px) {
+  [data-theme="care-uk"] .nav-main-list {
+    background: var(--white);
+  }
+  [data-theme="care-uk"] .nav-main-list li {
+    border-bottom-color: var(--border);
+  }
+  [data-theme="care-uk"] .nav-main-list a {
+    color: var(--text);
+  }
+}
+
+/* Buttons – green/teal primary */
+[data-theme="care-uk"] .btn-primary,
+[data-theme="care-uk"] .btn-cta,
+[data-theme="care-uk"] .btn-secondary {
+  background: var(--primary);
+}
+
+[data-theme="care-uk"] .btn-primary:hover,
+[data-theme="care-uk"] .btn-cta:hover,
+[data-theme="care-uk"] .btn-secondary:hover {
+  background: var(--primary-hover);
+}
+
+[data-theme="care-uk"] .sticky-cta .btn {
+  box-shadow: 0 4px 16px rgba(0, 173, 147, 0.35);
+}
+
+/* Hero overlay – green/teal tint */
+[data-theme="care-uk"] .hero-overlay {
+  background: linear-gradient(to bottom, rgba(0, 173, 147, 0.5) 0%, rgba(0, 173, 147, 0.75) 100%);
+}
+
+/* Footer – dark grey */
+[data-theme="care-uk"] .site-footer {
+  background: var(--text);
+}

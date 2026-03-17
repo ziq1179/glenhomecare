@@ -21,9 +21,9 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const API_SECRET = process.env.API_SECRET || 'change-me-in-production';
 
-// Role passwords (set in .env). Each grants the corresponding role when logging in.
+// Role passwords (set in .env, or default for super_admin). Each grants the corresponding role when logging in.
 const ROLE_PASSWORDS = {
-  super_admin: process.env.ADMIN_PASSWORD || process.env.SUPER_ADMIN_PASSWORD,
+  super_admin: process.env.ADMIN_PASSWORD || process.env.SUPER_ADMIN_PASSWORD || 'admin123',
   editor: process.env.EDITOR_PASSWORD,
   photo_manager: process.env.PHOTO_MANAGER_PASSWORD,
   review_moderator: process.env.REVIEW_MODERATOR_PASSWORD,
@@ -59,6 +59,8 @@ const PHOTO_SLOTS = [
   'staff_group'
 ];
 
+const VALID_THEMES = ['original', 'care-uk'];
+
 async function ensureTable() {
   if (!sql) return;
   await sql`
@@ -67,6 +69,34 @@ async function ensureTable() {
       url TEXT,
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
+  `;
+  await sql`
+    CREATE TABLE IF NOT EXISTS site_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT,
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+}
+
+async function getSettings() {
+  if (!sql) return { theme: 'original' };
+  try {
+    const rows = await sql`SELECT key, value FROM site_settings`;
+    const map = Object.fromEntries(rows.map(r => [r.key, r.value]));
+    const theme = VALID_THEMES.includes(map.theme) ? map.theme : 'original';
+    return { theme };
+  } catch (e) {
+    return { theme: 'original' };
+  }
+}
+
+async function setSetting(key, value) {
+  if (!sql) return;
+  await sql`
+    INSERT INTO site_settings (key, value, updated_at)
+    VALUES (${key}, ${value || null}, NOW())
+    ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
   `;
 }
 
@@ -155,6 +185,33 @@ app.post('/api/photos', authMiddleware, requireRole('super_admin', 'editor', 'ph
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Failed to save photos' });
+  }
+});
+
+// Public: get site settings (e.g. theme for front-end)
+app.get('/api/settings', async (req, res) => {
+  try {
+    const settings = await getSettings();
+    res.json(settings);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to load settings' });
+  }
+});
+
+// Admin: update site settings (theme: original | care-uk)
+app.post('/api/settings', authMiddleware, requireRole('super_admin', 'editor'), async (req, res) => {
+  const { theme } = req.body || {};
+  if (!VALID_THEMES.includes(theme)) {
+    return res.status(400).json({ error: 'Invalid theme', valid: VALID_THEMES });
+  }
+  try {
+    await setSetting('theme', theme);
+    const settings = await getSettings();
+    res.json(settings);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to save settings' });
   }
 });
 

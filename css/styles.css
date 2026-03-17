@@ -1,44 +1,45 @@
 /* ============================================
    Glens Residential Home - Design System
-   Carehome-style: Primary blue, white, vibrant green CTAs
-   Accessibility: min 16px, high contrast
+   Original: blue header/footer, green CTAs, light backgrounds.
+   Optional Care UK theme applied via data-theme="care-uk" + theme-care-uk.css
+   Accessibility: min 16px.
    ============================================ */
 
 :root {
-  /* Primary blue - header, main action buttons */
-  --primary-blue: #1e5a8e;
-  --primary-blue-hover: #164870;
-  --primary-blue-light: #2d7ab8;
+  /* Primary brand – blue (header, footer, links) */
+  --primary: #0369a1;
+  --primary-hover: #0284c7;
+  --primary-dark: #075985;
+
+  /* Accent – green (CTAs, buttons) */
+  --accent: #059669;
+  --accent-hover: #047857;
 
   /* White & backgrounds */
   --white: #ffffff;
   --bg-body: #f9fafb;
   --bg-content: #ffffff;
 
-  /* Vibrant green - key CTAs (Book a Visit, Call Us, Show on Map) */
-  --green-accent: #16a34a;
-  --green-accent-hover: #15803d;
-
   /* Text */
   --text: #1f2937;
   --text-muted: #6b7280;
 
-  /* Links & active states (light blue / cyan) */
+  /* Links */
   --link: #0284c7;
   --link-hover: #0369a1;
 
-  /* Borders & subtle UI */
+  /* Borders */
   --border: #e5e7eb;
   --border-light: #f3f4f6;
 
-  /* Typography - min 16px base */
+  /* Typography */
   --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-size-base: 18px;
   --font-size-lg: 1.25rem;
   --font-size-xl: 1.5rem;
   --font-size-2xl: 2rem;
-  --font-size-3xl: 2.5rem;
-  --line-height: 1.6;
+  --font-size-3xl: 2.75rem;
+  --line-height: 1.65;
 
   /* Spacing */
   --space-xs: 0.5rem;
@@ -47,12 +48,13 @@
   --space-lg: 2rem;
   --space-xl: 3rem;
   --space-2xl: 4rem;
+  --space-3xl: 5rem;
 
   /* Layout */
   --max-width: 1200px;
   --header-height: 72px;
   --radius: 8px;
-  --shadow: 0 4px 20px rgba(30, 90, 142, 0.1);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 *,
@@ -133,7 +135,7 @@ a:hover {
 }
 
 a:focus-visible {
-  outline: 2px solid var(--primary-blue);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -142,7 +144,7 @@ a:focus-visible {
   position: absolute;
   top: -100px;
   left: var(--space-md);
-  background: var(--primary-blue);
+  background: var(--primary);
   color: var(--white);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius);
@@ -154,12 +156,12 @@ a:focus-visible {
   top: var(--space-md);
 }
 
-/* Header */
+/* Header – blue bar, white nav (original) */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--primary-blue);
+  background: var(--primary);
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
@@ -185,7 +187,6 @@ a:focus-visible {
   width: auto;
 }
 
-/* Logo on blue header: show white (SVG uses currentColor; header link is white) */
 .site-header .logo {
   color: var(--white);
 }
@@ -213,7 +214,6 @@ a:focus-visible {
   text-decoration: none;
 }
 
-/* Mobile menu toggle */
 .menu-toggle {
   display: none;
   background: none;
@@ -225,7 +225,7 @@ a:focus-visible {
 }
 
 .menu-toggle:focus-visible {
-  outline: 2px solid var(--white);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -239,7 +239,7 @@ a:focus-visible {
     top: var(--header-height);
     left: 0;
     right: 0;
-    background: var(--primary-blue);
+    background: var(--primary);
     flex-direction: column;
     padding: var(--space-lg);
     gap: 0;
@@ -285,42 +285,40 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-/* Primary blue buttons (Send Email, View Phone, etc.) */
+/* Primary buttons – green accent (original) */
 .btn-primary {
-  background: var(--primary-blue);
+  background: var(--accent);
   color: var(--white);
 }
 
 .btn-primary:hover {
-  background: var(--primary-blue-hover);
+  background: var(--accent-hover);
   color: var(--white);
   text-decoration: none;
 }
 
-/* Vibrant green for key CTAs (Book a Visit, Call Us) */
 .btn-cta {
-  background: var(--green-accent);
+  background: var(--accent);
   color: var(--white);
 }
 
 .btn-cta:hover {
-  background: var(--green-accent-hover);
+  background: var(--accent-hover);
   color: var(--white);
   text-decoration: none;
 }
 
 .btn-secondary {
-  background: var(--primary-blue);
+  background: var(--accent);
   color: var(--white);
 }
 
 .btn-secondary:hover {
-  background: var(--primary-blue-hover);
+  background: var(--accent-hover);
   color: var(--white);
   text-decoration: none;
 }
 
-/* Sticky CTA - visible on mobile */
 .sticky-cta {
   display: none;
   position: fixed;
@@ -332,7 +330,7 @@ a:focus-visible {
 .sticky-cta .btn {
   padding: var(--space-md) var(--space-lg);
   font-size: 1.125rem;
-  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.35);
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35);
 }
 
 @media (max-width: 768px) {
@@ -392,7 +390,7 @@ a:focus-visible {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to bottom, rgba(30, 90, 142, 0.75) 0%, rgba(30, 90, 142, 0.85) 100%);
+  background: linear-gradient(to bottom, rgba(3, 105, 161, 0.5) 0%, rgba(3, 105, 161, 0.75) 100%);
 }
 
 .hero-inner {
@@ -479,15 +477,15 @@ a:focus-visible {
   color: var(--text);
   margin: 0 0 var(--space-md);
   padding-left: var(--space-sm);
-  border-left: 4px solid var(--primary-blue);
+  border-left: 4px solid var(--primary);
 }
 
-/* Footer */
+/* Footer – blue (original) */
 .site-footer {
-  background: var(--primary-blue);
+  background: var(--primary);
   color: var(--white);
-  padding: var(--space-xl) var(--space-md);
-  margin-top: var(--space-2xl);
+  padding: var(--space-2xl) var(--space-md);
+  margin-top: var(--space-3xl);
 }
 
 .footer-inner {
@@ -544,9 +542,9 @@ a:focus-visible {
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  outline: 2px solid var(--primary-blue);
+  outline: 2px solid var(--primary);
   outline-offset: 0;
-  border-color: var(--primary-blue);
+  border-color: var(--primary);
 }
 
 .form-group textarea {
@@ -571,7 +569,7 @@ a:focus-visible {
   margin-top: var(--space-md);
   font-weight: 500;
 }
-.form-status.success { color: var(--green-accent); }
+.form-status.success { color: var(--primary); }
 .form-status.error { color: #b91c1c; }
 
 /* FAQ accordion */
@@ -605,14 +603,14 @@ a:focus-visible {
 }
 
 .faq-question:focus-visible {
-  outline: 2px solid var(--primary-blue);
+  outline: 2px solid var(--primary);
   outline-offset: -2px;
 }
 
 .faq-question::after {
   content: "+";
   font-size: 1.5rem;
-  color: var(--primary-blue);
+  color: var(--primary);
 }
 
 .faq-item.is-open .faq-question::after {
@@ -651,7 +649,7 @@ a:focus-visible {
 }
 
 .review-rating {
-  color: var(--green-accent);
+  color: var(--primary);
   font-size: 1.25rem;
   letter-spacing: 0.05em;
   margin-bottom: var(--space-sm);
@@ -690,7 +688,7 @@ a:focus-visible {
 
 .rating-star:hover span,
 .rating-star input:focus-visible + span {
-  color: var(--green-accent);
+  color: var(--primary);
 }
 
 .rating-star input {
@@ -702,7 +700,7 @@ a:focus-visible {
 }
 
 .rating-star:has(input:checked) span {
-  color: var(--green-accent);
+  color: var(--primary);
 }
 
 /* Fill stars up to and including selected (JS sets data-rating on .rating-input) */
@@ -711,7 +709,7 @@ a:focus-visible {
 .rating-input[data-rating="3"] .rating-star:nth-child(-n+3) span,
 .rating-input[data-rating="4"] .rating-star:nth-child(-n+4) span,
 .rating-input[data-rating="5"] .rating-star:nth-child(-n+5) span {
-  color: var(--green-accent);
+  color: var(--primary);
 }
 
 /* Map placeholder */
@@ -746,7 +744,7 @@ a:focus-visible {
   text-decoration: none;
 }
 .map-placeholder.img-wrap .map-link-overlay:hover {
-  background: var(--green-accent-hover);
+  background: var(--primary-hover);
   text-decoration: none;
 }
 

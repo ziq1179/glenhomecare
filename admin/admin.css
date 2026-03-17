@@ -17,6 +17,11 @@ body { font-family: system-ui, sans-serif; margin: 0; background: #f9fafb; color
 .btn-secondary { background: #e5e7eb; color: #1f2937; }
 .hint { color: #6b7280; margin-bottom: 1.5rem; }
 .admin-main { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.admin-section { margin-bottom: 2rem; }
+.admin-section h2 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+.theme-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
+.theme-row label { margin: 0; }
+.theme-row select { padding: 0.5rem 0.75rem; font-size: 1rem; border: 1px solid #e5e7eb; border-radius: 6px; min-width: 280px; }
 .slot { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb; }
 .slot:last-of-type { border-bottom: none; }
 .slot label { display: block; font-weight: 600; margin-bottom: 0.25rem; }

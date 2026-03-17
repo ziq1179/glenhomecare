@@ -30,6 +30,7 @@
   };
 
   var CAN_EDIT_PHOTOS = ['super_admin', 'editor', 'photo_manager'];
+  var CAN_EDIT_THEME = ['super_admin', 'editor'];
 
   function showDashboard() {
     loginPage.hidden = true;
@@ -47,7 +48,22 @@
     if (readOnlyNote) {
       readOnlyNote.hidden = !role || CAN_EDIT_PHOTOS.includes(role);
     }
+    var saveThemeBtn = document.getElementById('save-theme-btn');
+    if (saveThemeBtn) saveThemeBtn.hidden = !role || !CAN_EDIT_THEME.includes(role);
     loadSlots();
+    loadSettings();
+  }
+
+  function loadSettings() {
+    fetch(API_BASE + '/settings')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var themeEl = document.getElementById('site-theme');
+        if (themeEl && (data.theme === 'original' || data.theme === 'care-uk')) {
+          themeEl.value = data.theme;
+        }
+      })
+      .catch(function () {});
   }
 
   function showLogin() {
@@ -107,6 +123,41 @@
   });
 
   document.getElementById('logout-btn').addEventListener('click', showLogin);
+
+  var saveThemeBtn = document.getElementById('save-theme-btn');
+  if (saveThemeBtn) {
+    saveThemeBtn.addEventListener('click', function () {
+      var themeEl = document.getElementById('site-theme');
+      var theme = themeEl ? themeEl.value : 'original';
+      var statusEl = document.getElementById('theme-status');
+      if (statusEl) statusEl.textContent = 'Saving…';
+      fetch(API_BASE + '/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ theme: theme })
+      })
+        .then(function (r) {
+          if (r.status === 401) throw new Error('Session expired');
+          if (!r.ok) throw new Error('Save failed');
+          return r.json();
+        })
+        .then(function () {
+          if (statusEl) {
+            statusEl.textContent = 'Theme saved. The public site will use it on next load.';
+            statusEl.className = 'status success';
+          }
+        })
+        .catch(function (err) {
+          if (statusEl) {
+            statusEl.textContent = err.message || 'Failed to save theme.';
+            statusEl.className = 'status error';
+          }
+        });
+    });
+  }
 
   function loadSlots() {
     fetch(API_BASE + '/photos')

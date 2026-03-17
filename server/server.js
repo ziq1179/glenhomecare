@@ -10,6 +10,7 @@
  */
 
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
@@ -17,13 +18,28 @@ const { neon } = require('@neondatabase/serverless');
 
 const PROJECT_ROOT = path.join(__dirname, '..');
 
+function loadAdminPassword() {
+  try {
+    const configPath = path.join(__dirname, 'admin-config.json');
+    if (fs.existsSync(configPath)) {
+      const data = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      if (data.adminPassword && typeof data.adminPassword === 'string') {
+        return data.adminPassword;
+      }
+    }
+  } catch (e) { /* ignore */ }
+  return process.env.ADMIN_PASSWORD || process.env.SUPER_ADMIN_PASSWORD || 'admin123';
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_SECRET = process.env.API_SECRET || 'change-me-in-production';
 
-// Role passwords (set in .env, or default for super_admin). Each grants the corresponding role when logging in.
+const ADMIN_PASSWORD = loadAdminPassword();
+
+// Role passwords: admin from admin-config.json or .env; others from .env only
 const ROLE_PASSWORDS = {
-  super_admin: process.env.ADMIN_PASSWORD || process.env.SUPER_ADMIN_PASSWORD || 'admin123',
+  super_admin: ADMIN_PASSWORD,
   editor: process.env.EDITOR_PASSWORD,
   photo_manager: process.env.PHOTO_MANAGER_PASSWORD,
   review_moderator: process.env.REVIEW_MODERATOR_PASSWORD,

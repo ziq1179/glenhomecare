@@ -42,7 +42,7 @@ Run the app from the project root so the site and admin are served together and 
    - **Root directory:** leave default (repo root).
    - **Build command:** `cd server && npm install`
    - **Start command:** `cd server && node server.js`
-4. **Environment:** Add `DATABASE_URL` (Neon connection string), `ADMIN_PASSWORD`, `API_SECRET`. See [NEON_SETUP.md](NEON_SETUP.md).
+4. **Environment:** Add `DATABASE_URL` (Neon connection string) and `API_SECRET`. See [NEON_SETUP.md](NEON_SETUP.md). The admin password is in `server/admin-config.json` (edit the file to change it; no Render env var needed).
 5. Deploy. One URL serves the website and API (e.g. `https://glens-home-app.onrender.com` and `https://glens-home-app.onrender.com/admin`).
 
 To host the static site and API on separate Render services instead, deploy the API as above and the static site as a **Static Site**; set `window.GLENS_PHOTOS_API` to the API URL where the static site is built or in a small script.
@@ -63,7 +63,7 @@ An **admin user** can manage the photos shown on the site without editing code.
 1. **Photo guide** (`photo-guide.html`) – Checklist for staff: what to photograph (exterior, garden, lounge, bedroom, dining, meal, activity, nursery visit, manager headshot, staff group). Use it when taking or choosing images.
 2. **API server** (`server/`) – Node + Express app that:
    - Exposes **GET /api/photos** (public) – returns current image URL for each slot.
-   - **POST /api/login** – admin login with `ADMIN_PASSWORD`; returns a token.
+   - **POST /api/login** – admin login with password from `server/admin-config.json`; returns a token.
    - **POST /api/photos** (auth) – save image URLs per slot (stored in Neon).
 3. **Admin UI** – Open `/admin/` (when using the API server). Log in, then paste image URLs for each slot. Images can be hosted anywhere (e.g. Imgur, Cloudinary, or your own server); the admin only stores the URL.
 4. **Public site** – Each managed image has `data-photo-slot="..."`. The script `js/photos.js` fetches `/api/photos` and replaces `img` sources when the API returns a URL for that slot. If the API is unavailable or a slot is empty, the default (e.g. Unsplash) stays.
@@ -73,7 +73,7 @@ An **admin user** can manage the photos shown on the site without editing code.
 ```bash
 cd server
 cp .env.example .env
-# Edit .env: set ADMIN_PASSWORD, API_SECRET, DATABASE_URL (Neon connection string)
+# Edit .env: set API_SECRET, DATABASE_URL (Neon connection string). Admin password: edit server/admin-config.json
 npm install
 npm start
 ```

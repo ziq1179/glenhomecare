@@ -8,6 +8,10 @@ server/node_modules/
 .env.*.local
 server/.env
 
+# User-uploaded images (keep folder, not files)
+uploads/*
+!uploads/.gitkeep
+
 # OS and editor
 .DS_Store
 Thumbs.db

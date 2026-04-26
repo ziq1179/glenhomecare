@@ -11,20 +11,23 @@
   <div id="login-page" class="page">
     <div class="login-box">
       <h1>Admin login</h1>
-      <p>Manage website photos. Password is in <code>server/admin-config.json</code>.</p>
+      <p>Manage website photos (care staff: use the password your manager gives you). Technical setup: <code>server/admin-config.json</code>.</p>
       <form id="login-form">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required autocomplete="current-password">
         <button type="submit" class="btn btn-primary">Log in</button>
       </form>
       <p id="login-error" class="error" aria-live="polite"></p>
+      <p class="login-back"><a href="/">← Back to website</a></p>
     </div>
   </div>
 
   <div id="dashboard-page" class="page" hidden>
     <header class="admin-header">
       <h1>Manage website photos</h1>
+      <p class="admin-lead">Upload a new image for a slot, or paste a full image URL. Changes apply to the live site after you save. For “Life at the Glens”, slots are listed in the same order as the photos on that page (top to bottom, then left to right in the big gallery). One slot updates two places: <strong>Life page – top row &amp; gallery: Balloon / intergenerational</strong>.</p>
       <span id="admin-role" class="admin-role" aria-live="polite"></span>
+      <a href="/" class="admin-nav-link">Back to home page</a>
       <a href="/photo-guide.html" target="_blank" rel="noopener">Photo guide</a>
       <button type="button" id="logout-btn" class="btn btn-secondary">Log out</button>
     </header>
@@ -45,12 +48,18 @@
       <section class="admin-section" aria-labelledby="photos-heading">
         <h2 id="photos-heading">Photo URLs</h2>
       <p id="readonly-note" class="hint readonly-note" hidden>You are logged in as <strong>Viewer</strong>. You can see the current photos but cannot change them. Use a different role to edit.</p>
-      <p class="hint">Paste the full image URL for each slot (e.g. from Imgur, Cloudinary, or your host). Leave blank to use the site default.</p>
+      <p class="hint">Upload an image for each slot, or paste a full URL. Uploaded files are stored on the server and shown at <code>/uploads/…</code> on your main website address.</p>
       <form id="photos-form">
         <div id="photo-slots"></div>
         <button type="submit" class="btn btn-primary">Save all</button>
       </form>
       <p id="save-status" class="status" role="status" aria-live="polite"></p>
+      </section>
+      <section class="admin-section" aria-labelledby="contact-requests-heading">
+        <h2 id="contact-requests-heading">Contact / Visit requests</h2>
+        <p class="hint">Messages from the “Book a Visit” form. View and mark as responded.</p>
+        <div id="contact-requests-list" class="contact-requests-list"></div>
+        <p id="contact-requests-status" class="status" role="status" aria-live="polite"></p>
       </section>
     </main>
   </div>

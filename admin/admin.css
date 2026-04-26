@@ -6,11 +6,15 @@ body { font-family: system-ui, sans-serif; margin: 0; background: #f9fafb; color
 .login-box label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
 .login-box input { width: 100%; padding: 0.5rem 0.75rem; font-size: 1rem; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 1rem; }
 .login-box .btn { margin-top: 0.5rem; }
+.login-back { margin-top: 1.25rem; margin-bottom: 0; font-size: 0.95rem; }
+.login-back a { color: #0284c7; }
 .error { color: #b91c1c; margin-top: 0.5rem; }
 .admin-header { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.admin-header h1 { margin: 0; font-size: 1.5rem; }
+.admin-header h1 { margin: 0; font-size: 1.5rem; flex: 1 1 100%; }
+.admin-lead { width: 100%; margin: 0.5rem 0 0; font-size: 0.95rem; line-height: 1.5; color: #4b5563; max-width: 52rem; }
 .admin-role { font-size: 0.9rem; color: #6b7280; padding: 0.25rem 0.5rem; background: #f3f4f6; border-radius: 4px; }
 .admin-header a { color: #0284c7; }
+.admin-header .admin-nav-link { font-weight: 500; }
 .readonly-note { background: #fef3c7; padding: 0.75rem; border-radius: 6px; color: #92400e; }
 .btn { padding: 0.5rem 1rem; font-size: 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
 .btn-primary { background: #1e5a8e; color: #fff; }
@@ -26,9 +30,32 @@ body { font-family: system-ui, sans-serif; margin: 0; background: #f9fafb; color
 .slot:last-of-type { border-bottom: none; }
 .slot label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
 .slot .slot-key { font-size: 0.8rem; color: #6b7280; font-family: monospace; }
+.slot .slot-upload { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin: 0.5rem 0; }
+.slot .file-input { font-size: 0.9rem; max-width: 100%; }
+.slot .btn-upload { margin: 0; }
+.upload-hint { font-size: 0.85rem; color: #6b7280; }
+.upload-hint.success { color: #16a34a; }
+.upload-hint.error { color: #b91c1c; }
 .slot input[type="url"], .slot input[type="text"] { width: 100%; padding: 0.5rem 0.75rem; font-size: 1rem; border: 1px solid #e5e7eb; border-radius: 6px; }
 .slot .preview { margin-top: 0.5rem; }
 .slot .preview img { max-width: 200px; max-height: 120px; object-fit: cover; border-radius: 4px; }
 .status { margin-top: 1rem; font-weight: 500; }
 .status.success { color: #16a34a; }
 .status.error { color: #b91c1c; }
+
+.contact-requests-list { margin-top: 1rem; }
+.contact-request-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #fafafa; }
+.contact-request-card.is-responded { background: #f0fdf4; border-color: #bbf7d0; }
+.contact-request-header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-bottom: 0.5rem; }
+.contact-request-meta { font-size: 0.9rem; color: #6b7280; }
+.contact-request-date { font-size: 0.85rem; color: #9ca3af; margin-left: auto; }
+.contact-request-message { margin: 0.5rem 0; white-space: pre-wrap; }
+.badge { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; }
+.badge-pending { background: #fef3c7; color: #92400e; }
+.badge-responded { background: #d1fae5; color: #065f46; }
+.contact-request-actions { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; }
+.contact-request-actions label { display: block; font-weight: normal; }
+.contact-response-notes { width: 100%; padding: 0.5rem; font-size: 0.9rem; border: 1px solid #e5e7eb; border-radius: 6px; margin-top: 0.25rem; font-family: inherit; }
+.contact-request-buttons { margin-top: 0.5rem; }
+.contact-request-buttons .btn { margin-right: 0.5rem; margin-top: 0.25rem; }
+.contact-request-notes { margin: 0.5rem 0 0; font-size: 0.9rem; color: #6b7280; }

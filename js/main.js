@@ -93,11 +93,34 @@
         return;
       }
 
-      // For static site: show success and optionally mailto or send to future API
-      // When you add a backend (e.g. Render + Neon), POST to your API here.
-      formStatus.textContent = 'Thank you. We will be in touch soon.';
-      formStatus.classList.add('success');
-      contactForm.reset();
+      var phoneEl = contactForm.querySelector('[name="phone"]');
+      var apiBase = (window.GLENS_PHOTOS_API || '').replace(/\/$/, '') || window.location.origin;
+      formStatus.textContent = 'Sending…';
+      formStatus.className = 'form-status';
+
+      fetch(apiBase + '/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.value.trim(),
+          email: email.value.trim(),
+          phone: phoneEl ? phoneEl.value.trim() : '',
+          message: message.value.trim()
+        })
+      })
+        .then(function (r) {
+          if (r.ok) return r.json();
+          return r.json().then(function (data) { throw new Error(data.error || 'Something went wrong'); });
+        })
+        .then(function () {
+          formStatus.textContent = 'Thank you. We will be in touch soon.';
+          formStatus.classList.add('success');
+          contactForm.reset();
+        })
+        .catch(function (err) {
+          formStatus.textContent = err.message || 'Something went wrong. Please try again or call us.';
+          formStatus.classList.add('error');
+        });
     });
   }
 

@@ -3,6 +3,7 @@
  * - GET /api/photos (public): returns photo slot URLs for the website
  * - POST /api/login: admin login with role (password matches one of the role env vars)
  * - POST /api/photos (auth, role): update photo slot URLs (stored in Neon)
+ * - POST /api/auth/verify: check token (200 + { ok, role }) — used on admin load to avoid console 401 noise
  * - GET /api/me (auth): current user role for admin UI
  *
  * Roles: super_admin, editor, photo_manager, review_moderator, viewer
@@ -13,10 +14,45 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
+const multer = require('multer');
 const cors = require('cors');
 const { neon } = require('@neondatabase/serverless');
 
 const PROJECT_ROOT = path.join(__dirname, '..');
+const UPLOADS_DIR = path.join(PROJECT_ROOT, 'uploads');
+const UPLOAD_MIME = /^image\/(jpeg|pjpeg|png|gif|webp|svg\+xml|bmp|x-ms-bmp|tiff|x-tiff|avif|heic|heif)$/i;
+const UPLOAD_EXT = /\.(jpe?g|png|gif|webp|svg|bmp|tiff?|avif|heic|heif)$/i;
+const MAX_UPLOAD_MB = Math.min(100, Math.max(1, parseInt(process.env.MAX_UPLOAD_MB || '25', 10) || 25));
+const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
+
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOADS_DIR);
+  },
+  filename: (req, file, cb) => {
+    const ext = (path.extname(file.originalname) || '.jpg').toLowerCase();
+    const safeExt = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.tif', '.tiff', '.avif', '.heic', '.heif'].includes(ext) ? ext : '.jpg';
+    const qSlot = (req.query && req.query.slot) || '';
+    const safeSlot = String(qSlot).replace(/[^a-z0-9_]/gi, '_').slice(0, 32) || 'slot';
+    cb(null, `${safeSlot}-${Date.now()}${safeExt}`);
+  }
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: MAX_UPLOAD_BYTES },
+  fileFilter: (req, file, cb) => {
+    const mime = (file.mimetype || '').toLowerCase();
+    if (UPLOAD_MIME.test(mime)) return cb(null, true);
+    if (!mime || mime === 'application/octet-stream') {
+      if (UPLOAD_EXT.test(file.originalname || '')) return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed (JPEG, PNG, GIF, WebP, SVG, BMP, TIFF, AVIF, HEIC). If this is a photo, try converting to JPEG or PNG.'));
+  }
+});
 
 function loadAdminPassword() {
   try {
@@ -72,7 +108,36 @@ const PHOTO_SLOTS = [
   'activity',
   'nursery_visit',
   'manager_headshot',
-  'staff_group'
+  'staff_group',
+  'services_elderly_care',
+  'life_hero_arts',
+  'life_hero_lounge',
+  'life_gal_01',
+  'life_gal_02',
+  'life_gal_03',
+  'life_gal_04',
+  'life_gal_05',
+  'life_gal_06',
+  'life_gal_07',
+  'life_gal_08',
+  'life_gal_09',
+  'life_gal_10',
+  'life_gal_11',
+  'life_gal_12',
+  'life_gal_13',
+  'life_gal_14',
+  'life_gal_15',
+  'life_gal_16',
+  'life_gal_17',
+  'life_gal_18',
+  'life_gal_19',
+  'life_gal_20',
+  'life_gal_21',
+  'life_gal_22',
+  'life_gal_23',
+  'life_gal_24',
+  'life_gal_25',
+  'life_gal_26'
 ];
 
 const VALID_THEMES = ['original', 'care-uk'];
@@ -91,6 +156,19 @@ async function ensureTable() {
       key TEXT PRIMARY KEY,
       value TEXT,
       updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  await sql`
+    CREATE TABLE IF NOT EXISTS contact_requests (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone TEXT,
+      message TEXT NOT NULL,
+      responded BOOLEAN DEFAULT FALSE,
+      response_notes TEXT,
+      responded_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
 }
@@ -136,6 +214,52 @@ async function setSlots(slots) {
   }
 }
 
+function removeUploadFileByUrl(publicUrl) {
+  if (!publicUrl || typeof publicUrl !== 'string' || !publicUrl.startsWith('/uploads/')) return;
+  const base = path.basename(publicUrl);
+  if (!base || base.includes('..')) return;
+  const full = path.join(UPLOADS_DIR, base);
+  if (!path.resolve(full).startsWith(path.resolve(UPLOADS_DIR))) return;
+  fs.unlink(full, () => {});
+}
+
+async function createContactRequest(body) {
+  if (!sql) return null;
+  const { name, email, phone, message } = body;
+  if (!name || !email || !message) return null;
+  const [row] = await sql`
+    INSERT INTO contact_requests (name, email, phone, message)
+    VALUES (${String(name).trim()}, ${String(email).trim()}, ${phone ? String(phone).trim() : null}, ${String(message).trim()})
+    RETURNING id, name, email, phone, message, responded, response_notes, created_at
+  `;
+  return row;
+}
+
+async function getContactRequests() {
+  if (!sql) return [];
+  const rows = await sql`
+    SELECT id, name, email, phone, message, responded, response_notes, responded_at, created_at
+    FROM contact_requests
+    ORDER BY created_at DESC
+  `;
+  return rows;
+}
+
+async function updateContactRequest(id, updates) {
+  if (!sql) return null;
+  const { responded, response_notes } = updates;
+  const setNotes = typeof response_notes !== 'undefined';
+  const [row] = await sql`
+    UPDATE contact_requests
+    SET responded = COALESCE(${responded ?? null}, responded),
+        response_notes = CASE WHEN ${setNotes} THEN ${response_notes} ELSE response_notes END,
+        responded_at = CASE WHEN ${responded === true} THEN NOW() ELSE responded_at END
+    WHERE id = ${id}
+    RETURNING id, name, email, phone, message, responded, response_notes, responded_at, created_at
+  `;
+  return row;
+}
+
 function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
   const session = token && tokenStore.get(token);
@@ -163,6 +287,19 @@ app.get('/api/photos', async (req, res) => {
     console.error(e);
     res.status(500).json({ error: 'Failed to load photos' });
   }
+});
+
+// Check if a saved token is still valid (always 200 — avoids red 401 lines in the browser console)
+app.post('/api/auth/verify', (req, res) => {
+  const raw = req.body?.token;
+  if (!raw || typeof raw !== 'string') {
+    return res.json({ ok: false });
+  }
+  const session = tokenStore.get(raw);
+  if (!session?.role) {
+    return res.json({ ok: false });
+  }
+  res.json({ ok: true, role: session.role });
 });
 
 // Admin login: password must match one of the role env vars; returns token + role
@@ -204,6 +341,50 @@ app.post('/api/photos', authMiddleware, requireRole('super_admin', 'editor', 'ph
   }
 });
 
+// Admin: upload image file for a slot — file is served at /uploads/... on the same domain as the site
+app.post(
+  '/api/photos/upload',
+  authMiddleware,
+  requireRole('super_admin', 'editor', 'photo_manager'),
+  (req, res, next) => {
+    upload.single('photo')(req, res, (err) => {
+      if (!err) return next();
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          error: `File too large (maximum ${MAX_UPLOAD_MB} MB). Compress the image or set MAX_UPLOAD_MB in the server environment.`
+        });
+      }
+      return res.status(400).json({ error: err.message || 'Upload failed' });
+    });
+  },
+  async (req, res) => {
+    const slot = req.query.slot;
+    if (!slot || !PHOTO_SLOTS.includes(slot)) {
+      if (req.file) fs.unlink(req.file.path, () => {});
+      return res.status(400).json({ error: 'Invalid or missing ?slot=', valid: PHOTO_SLOTS });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file; use form field name "photo"' });
+    }
+    if (!sql) {
+      fs.unlink(req.file.path, () => {});
+      return res.status(503).json({ error: 'Database not configured. Set DATABASE_URL to save uploaded image for this slot.' });
+    }
+    try {
+      const map = await getSlots();
+      removeUploadFileByUrl(map[slot]);
+      const publicUrl = `/uploads/${req.file.filename}`;
+      await setSlots({ [slot]: publicUrl });
+      const updated = await getSlots();
+      res.json({ url: publicUrl, slot, slots: updated });
+    } catch (e) {
+      console.error(e);
+      fs.unlink(req.file.path, () => {});
+      res.status(500).json({ error: 'Failed to save photo' });
+    }
+  }
+);
+
 // Public: get site settings (e.g. theme for front-end)
 app.get('/api/settings', async (req, res) => {
   try {
@@ -230,6 +411,56 @@ app.post('/api/settings', authMiddleware, requireRole('super_admin', 'editor'), 
     res.status(500).json({ error: 'Failed to save settings' });
   }
 });
+
+// Public: submit contact / visit request (saved to Neon)
+app.post('/api/contact', async (req, res) => {
+  const body = req.body || {};
+  if (!body.name || !body.email || !body.message) {
+    return res.status(400).json({ error: 'Name, email and message are required' });
+  }
+  try {
+    const row = await createContactRequest(body);
+    if (!row) {
+      return res.status(503).json({ error: 'Contact form is temporarily unavailable. Please try again or call us.' });
+    }
+    res.status(201).json({ id: row.id, message: 'Thank you. We will be in touch soon.' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to submit. Please try again or call us.' });
+  }
+});
+
+// Admin: list contact/visit requests (any logged-in admin role)
+const CONTACT_VIEW_ROLES = ['super_admin', 'editor', 'photo_manager', 'review_moderator', 'viewer'];
+app.get('/api/contact-requests', authMiddleware, requireRole(...CONTACT_VIEW_ROLES), async (req, res) => {
+  try {
+    const list = await getContactRequests();
+    res.json(list);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to load requests' });
+  }
+});
+
+// Admin: update request (mark responded / add notes)
+app.patch('/api/contact-requests/:id', authMiddleware, requireRole('super_admin', 'editor', 'review_moderator'), async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ error: 'Invalid id' });
+  }
+  const { responded, response_notes } = req.body || {};
+  try {
+    const row = await updateContactRequest(id, { responded, response_notes });
+    if (!row) return res.status(404).json({ error: 'Request not found' });
+    res.json(row);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to update' });
+  }
+});
+
+// Uploaded images (same origin as public site, e.g. https://your-domain.com/uploads/...)
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Serve admin UI and main site (so /photo-guide.html etc. work when using this server)
 app.use('/admin', express.static(path.join(PROJECT_ROOT, 'admin'), { index: 'index.html' }));

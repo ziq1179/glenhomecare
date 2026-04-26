@@ -65,7 +65,8 @@ An **admin user** can manage the photos shown on the site without editing code.
    - Exposes **GET /api/photos** (public) – returns current image URL for each slot.
    - **POST /api/login** – admin login with password from `server/admin-config.json`; returns a token.
    - **POST /api/photos** (auth) – save image URLs per slot (stored in Neon).
-3. **Admin UI** – Open `/admin/` (when using the API server). Log in, then paste image URLs for each slot. Images can be hosted anywhere (e.g. Imgur, Cloudinary, or your own server); the admin only stores the URL.
+   - **POST /api/photos/upload** (auth) – upload an image file; it is saved under `uploads/` and served as `/uploads/…` on the same domain as the site.
+3. **Admin UI** – Open `/admin/`. You can **upload** a file per slot or paste a full URL. Uploads are stored in the `uploads` folder; Neon stores the path (e.g. `/uploads/exterior_entrance-123.jpg`). On **Render**, the server disk is often cleared on deploy unless you add a [persistent disk](https://render.com/docs/disks) for the `uploads` directory, or use external image hosting and URLs instead.
 4. **Public site** – Each managed image has `data-photo-slot="..."`. The script `js/photos.js` fetches `/api/photos` and replaces `img` sources when the API returns a URL for that slot. If the API is unavailable or a slot is empty, the default (e.g. Unsplash) stays.
 
 **Run the API locally (with Neon):**
@@ -84,7 +85,7 @@ Then open `http://localhost:3001` for the main site and `http://localhost:3001/a
 
 ## Images
 
-The site uses **Unsplash** placeholders by default. Use the **admin** to set your own image URLs per slot, or replace `src` in the HTML. See **Photo guide** for the full checklist (exterior, garden, lounge, bedroom, dining, meal, activity, nursery visit, manager headshot, staff group).
+The site uses **Unsplash** placeholders by default on some pages, and **files in `images/`** as fallbacks on **Life at the Glens** and **Our Services (Elderly care)**. Care staff can open **`/admin/`**, sign in, and **upload** or **paste a URL** for each named slot. The **Photo guide** lists every slot, including many **Life gallery** slots (`life_gal_01` … `life_gal_26`, plus `life_hero_arts` and `life_hero_lounge`). The slot `life_hero_lounge` updates two places on the Life page (top right and the matching gallery image). On production, keep **`DATABASE_URL`** set and either a **persistent disk** for `uploads/` or use **external image URLs** so uploads survive redeploys.
 
 ## Regulation
 

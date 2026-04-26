@@ -85,7 +85,7 @@ Then open `http://localhost:3001` for the main site and `http://localhost:3001/a
 
 ## Images
 
-The site uses **Unsplash** placeholders by default on some pages, and **files in `images/`** as fallbacks on **Life at the Glens** and **Our Services (Elderly care)**. Care staff can open **`/admin/`**, sign in, and **upload** or **paste a URL** for each named slot. The **Photo guide** lists every slot, including many **Life gallery** slots (`life_gal_01` … `life_gal_26`, plus `life_hero_arts` and `life_hero_lounge`). The slot `life_hero_lounge` updates two places on the Life page (top right and the matching gallery image). On production, keep **`DATABASE_URL`** set and either a **persistent disk** for `uploads/` or use **external image URLs** so uploads survive redeploys.
+**Photo assets** (Glens, rooms, life gallery) are **not committed** to this repository: use **Cloudinary** (or similar) and paste the **https** image URL in **`/admin/`** for each slot, or the server’s **`/uploads/`** path if you upload there. HTML uses **Unsplash** URLs as **fallbacks** when the API has no URL yet. See **Photo guide** for slot names (e.g. `life_gal_01` … `life_gal_26`, `life_hero_arts`, `life_hero_lounge` — the last updates two places on the Life page). On production, set **`DATABASE_URL`**, and either a **persistent disk** for `uploads/` or rely on **external URLs** only.
 
 ## Regulation
 

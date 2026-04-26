@@ -12,6 +12,12 @@ server/.env
 uploads/*
 !uploads/.gitkeep
 
+# Site photos (JPEG/PNG/WebP): use Cloudinary (or similar) + Admin URLs — do not commit
+images/**/*.jp*g
+images/**/*.png
+images/**/*.webp
+!images/**/*.svg
+
 # OS and editor
 .DS_Store
 Thumbs.db

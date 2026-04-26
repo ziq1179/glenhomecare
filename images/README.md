@@ -1,14 +1,11 @@
 # Images
 
-Placeholder images are in use. Replace with your own high-resolution photos when ready:
+**Raster photos (`.jpg` / `.png` / `.webp`) are not stored in this repo.** Upload to **Cloudinary** (or another host), then set each **Admin → photo slot** URL, or use **Unsplash**-style `data-fallback` placeholders in HTML until slots are filled.
 
-| File       | Use                          | Suggested content                    |
-|-----------|------------------------------|--------------------------------------|
-| exterior.svg | Home hero, Contact map area | Front of the building                |
-| bedroom.svg  | Our Services                | Sample resident bedroom              |
-| lounge.svg   | Home, Life at the Glens     | Communal lounge                      |
-| garden.svg   | Home, Life at the Glens     | Garden / outdoor space               |
-| team.svg     | Meet the Team               | Staff group or manager photo         |
-| logo.svg     | Header on every page        | Your facility logo (PNG or SVG)      |
+| File         | Use                          | Notes                    |
+|-------------|------------------------------|--------------------------|
+| `logo.svg`  | Header on every page            | In Git                   |
+| `favicon.svg` | Tab icon                    | In Git                   |
+| `exterior.svg` … `team.svg` | Optional SVG placeholders  | In Git; can swap to PNG URLs in Admin |
 
-You can replace the `.svg` files with `.jpg` or `.png` and update the `src` in the HTML (e.g. `images/exterior.jpg`). Keep the same filenames to avoid changing every page.
+The `allpics/` folder is kept (empty) for local convenience only; it is ignored for binaries via `.gitignore`.

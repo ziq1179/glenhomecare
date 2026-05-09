@@ -23,6 +23,14 @@ body { font-family: system-ui, sans-serif; margin: 0; background: #f9fafb; color
 .admin-main { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
 .admin-section { margin-bottom: 2rem; }
 .admin-section h2 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+.photos-subsection { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; }
+.photos-subsection:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.photos-subsection h3 { font-size: 1.1rem; margin: 0 0 0.5rem; color: #1f2937; }
+.subsection-hint { font-size: 0.9rem; margin-bottom: 1rem !important; }
+.life-grid-bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-bottom: 1.25rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; border: 1px solid #e5e7eb; }
+.life-grid-bulk .file-input { font-size: 0.9rem; max-width: 100%; }
+.photos-subsection-grid .slot { margin-bottom: 1rem; padding-bottom: 1rem; }
+.photos-subsection-grid .slot .preview img { max-width: 160px; max-height: 100px; }
 .theme-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
 .theme-row label { margin: 0; }
 .theme-row select { padding: 0.5rem 0.75rem; font-size: 1rem; border: 1px solid #e5e7eb; border-radius: 6px; min-width: 280px; }
@@ -36,6 +44,7 @@ body { font-family: system-ui, sans-serif; margin: 0; background: #f9fafb; color
 .upload-hint { font-size: 0.85rem; color: #6b7280; }
 .upload-hint.success { color: #16a34a; }
 .upload-hint.error { color: #b91c1c; }
+.preview-video-note { font-size: 0.9rem; color: #0369a1; }
 .slot input[type="url"], .slot input[type="text"] { width: 100%; padding: 0.5rem 0.75rem; font-size: 1rem; border: 1px solid #e5e7eb; border-radius: 6px; }
 .slot .preview { margin-top: 0.5rem; }
 .slot .preview img { max-width: 200px; max-height: 120px; object-fit: cover; border-radius: 4px; }

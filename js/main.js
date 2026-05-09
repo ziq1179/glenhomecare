@@ -180,4 +180,79 @@
       if (ratingInput) ratingInput.removeAttribute('data-rating');
     });
   }
+
+  // --- Life in pictures: 3 rows visible, then “Show all” ---
+  (function () {
+    var grid = document.getElementById('life-gallery-grid');
+    var btn = document.getElementById('life-gallery-toggle');
+    if (!grid || !btn) return;
+
+    var items = Array.prototype.slice.call(grid.querySelectorAll('.img-wrap'));
+    if (!items.length) return;
+
+    var expanded = false;
+    var resizeTimer = null;
+    var VISIBLE_ROW_COUNT = 3;
+
+    function getItemsPerRow() {
+      var top0 = items[0].offsetTop;
+      var n = 0;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].offsetTop === top0) n++;
+        else break;
+      }
+      return n > 0 ? n : 1;
+    }
+
+    function update() {
+      for (var h = 0; h < items.length; h++) {
+        items[h].classList.remove('life-gallery-item--hidden');
+      }
+
+      var perRow = getItemsPerRow();
+      var maxVisible = perRow * VISIBLE_ROW_COUNT;
+      var needsToggle = items.length > maxVisible;
+
+      if (!needsToggle) {
+        btn.hidden = true;
+        expanded = false;
+        return;
+      }
+
+      btn.hidden = false;
+
+      if (expanded) {
+        btn.setAttribute('aria-expanded', 'true');
+        btn.textContent = 'Show fewer photos';
+      } else {
+        for (var j = maxVisible; j < items.length; j++) {
+          items[j].classList.add('life-gallery-item--hidden');
+        }
+        btn.setAttribute('aria-expanded', 'false');
+        btn.textContent = 'Show all photos';
+      }
+    }
+
+    function scheduleUpdate() {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        resizeTimer = null;
+        update();
+      }, 120);
+    }
+
+    btn.addEventListener('click', function () {
+      expanded = !expanded;
+      update();
+    });
+
+    window.addEventListener('resize', scheduleUpdate);
+    window.addEventListener('load', scheduleUpdate);
+    if (window.ResizeObserver) {
+      try {
+        new ResizeObserver(scheduleUpdate).observe(grid);
+      } catch (e) { /* ignore */ }
+    }
+    update();
+  })();
 })();

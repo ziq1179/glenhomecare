@@ -65,7 +65,13 @@
 
 html {
   font-size: var(--font-size-base);
-  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 0.75rem);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -93,6 +99,7 @@ img[data-photo-slot] {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
+  position: relative;
 }
 
 .img-wrap img {
@@ -100,10 +107,38 @@ img[data-photo-slot] {
   object-fit: cover;
 }
 
+/* Video embeds (admin slot URL = YouTube, Vimeo, or direct file) */
+
+.img-wrap > video.glens-slot-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+}
+
+.img-wrap > iframe.glens-slot-video--embed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  z-index: 1;
+}
+
+.img-wrap > img.is-slot-replaced {
+  display: none !important;
+}
+
 .figure-caption {
   margin-top: var(--space-xs);
   font-size: 0.9375rem;
   color: var(--text-muted);
+  position: relative;
+  z-index: 2;
 }
 
 .hero-image {
@@ -120,19 +155,38 @@ img[data-photo-slot] {
   margin: var(--space-xl) 0;
 }
 
-/* Denser gallery on Life at the Glens (more photos, same card feel) */
-.life-gallery {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--space-md);
+/* Life in pictures: larger tiles; JS caps to 3 rows until “Show all” */
+.life-gallery-shell {
   margin: var(--space-lg) 0;
 }
 
+.life-gallery {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-lg);
+  margin: 0;
+}
+
 .life-gallery .figure-caption {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+}
+
+.life-gallery-expand {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: var(--space-lg) auto 0;
+}
+
+.life-gallery .img-wrap.life-gallery-item--hidden {
+  display: none;
 }
 
 .image-grid .img-wrap {
   aspect-ratio: 16/10;
+}
+
+.image-grid.life-gallery .img-wrap {
+  aspect-ratio: 4/3;
 }
 
 .image-grid .img-wrap img {
@@ -400,6 +454,24 @@ a:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.hero-bg video.glens-slot-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-bg iframe.glens-slot-video--embed {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.hero-bg > img.is-slot-replaced {
+  display: none !important;
 }
 
 .hero-overlay {
@@ -781,6 +853,7 @@ a:focus-visible {
 .map-placeholder.img-wrap .map-link-overlay {
   position: absolute;
   inset: 0;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;

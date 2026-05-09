@@ -45,6 +45,15 @@
     life_gal_26: 'Life gallery: Our community'
   };
 
+  var LIFE_GRID_KEYS = Object.keys(SLOT_LABELS).filter(function (k) {
+    return /^life_gal_/.test(k);
+  }).sort(function (a, b) {
+    return parseInt(a.replace(/^life_gal_/, ''), 10) - parseInt(b.replace(/^life_gal_/, ''), 10);
+  });
+  var MAIN_KEYS = Object.keys(SLOT_LABELS).filter(function (k) {
+    return LIFE_GRID_KEYS.indexOf(k) === -1;
+  });
+
   var token = localStorage.getItem('glens_admin_token');
   var role = localStorage.getItem('glens_admin_role');
   var loginPage = document.getElementById('login-page');
@@ -301,94 +310,211 @@
     });
   }
 
+  function uploadJsonResponse(r) {
+    return r.text().then(function (text) {
+      var data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (e) { /* ignore */ }
+      if (r.status === 401) {
+        showLogin();
+        throw new Error('Session expired (e.g. after server restart). Please log in again, then upload.');
+      }
+      if (!r.ok) throw new Error(data.error || ('Upload failed (' + r.status + ')'));
+      return data;
+    });
+  }
+
+  function wirePreview(input, preview, label) {
+    function updatePreview() {
+      var val = input.value.trim();
+      preview.innerHTML = '';
+      if (val) {
+        if (/youtube\.com|youtu\.be|vimeo\.com/i.test(val) || /\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(val)) {
+          preview.innerHTML = '<span class="preview-video-note">Video link — will play on the public site</span>';
+          return;
+        }
+        var absolute = val;
+        if (val.indexOf('http://') !== 0 && val.indexOf('https://') !== 0) {
+          absolute = (window.location && window.location.origin) ? (window.location.origin + (val.indexOf('/') === 0 ? val : '/' + val)) : val;
+        }
+        var img = document.createElement('img');
+        img.src = absolute;
+        img.alt = label;
+        img.onerror = function () { preview.innerHTML = '<span class="error">Invalid or blocked image</span>'; };
+        preview.appendChild(img);
+      }
+    }
+    input.addEventListener('input', updatePreview);
+    input.addEventListener('change', updatePreview);
+    updatePreview();
+  }
+
+  function uploadLifeGridBulk(fileList, auth, statusEl, fileInputEl) {
+    var keys = LIFE_GRID_KEYS;
+    var files = Array.from(fileList || []).filter(Boolean);
+    var maxN = keys.length;
+    if (!files.length) {
+      statusEl.textContent = 'Choose one or more images first.';
+      statusEl.className = 'upload-hint error';
+      return;
+    }
+    var truncated = files.length > maxN;
+    var arr = files.slice(0, maxN);
+    var i = 0;
+    function runNext() {
+      if (i >= arr.length) {
+        statusEl.textContent = 'Uploaded ' + arr.length + ' image(s) to the gallery.' + (truncated ? ' (Only the first ' + maxN + ' files are used.)' : '');
+        statusEl.className = 'upload-hint success';
+        if (fileInputEl) fileInputEl.value = '';
+        return;
+      }
+      var key = keys[i];
+      statusEl.textContent = 'Uploading ' + (i + 1) + ' of ' + arr.length + '…';
+      statusEl.className = 'upload-hint';
+      var fd = new FormData();
+      fd.append('photo', arr[i]);
+      fetch(API_BASE + '/photos/upload?slot=' + encodeURIComponent(key), {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + auth },
+        body: fd
+      })
+        .then(function (r) { return uploadJsonResponse(r); })
+        .then(function (data) {
+          var slotInput = document.getElementById('slot-' + key);
+          if (slotInput && data.url) {
+            slotInput.value = data.url;
+            slotInput.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+          i++;
+          runNext();
+        })
+        .catch(function (err) {
+          statusEl.textContent = err.message || 'Upload failed.';
+          statusEl.className = 'upload-hint error';
+        });
+    }
+    runNext();
+  }
+
+  function appendSingleUploadSlot(parent, key, url, canEdit) {
+    var label = SLOT_LABELS[key];
+    var div = document.createElement('div');
+    div.className = 'slot';
+    div.innerHTML =
+      '<label for="slot-' + key + '">' + label + '</label>' +
+      '<span class="slot-key">' + key + '</span>' +
+      (canEdit
+        ? '<div class="slot-upload">' +
+          '<input type="file" id="file-' + key + '" class="file-input" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" aria-label="Upload image for ' + label + '">' +
+          '<button type="button" class="btn btn-secondary btn-upload" data-upload-slot="' + key + '">Upload</button>' +
+          '<span class="upload-hint" data-upload-status="' + key + '"></span></div>'
+        : '') +
+      '<input type="text" class="slot-url" id="slot-' + key + '" name="' + key + '" value="' + (url || '').replace(/"/g, '&quot;') + '" placeholder="Image URL, or YouTube / Vimeo / .mp4 link" autocomplete="off">' +
+      '<div class="preview" data-slot="' + key + '"></div>';
+    parent.appendChild(div);
+    var input = div.querySelector('input.slot-url');
+    var fileInput = div.querySelector('input.file-input');
+    var preview = div.querySelector('.preview');
+    var uploadBtn = div.querySelector('.btn-upload');
+    if (canEdit && uploadBtn && fileInput) {
+      uploadBtn.addEventListener('click', function () {
+        var st = div.querySelector('[data-upload-status="' + key + '"]');
+        if (!fileInput.files || !fileInput.files[0]) {
+          if (st) { st.textContent = 'Choose a file first.'; st.className = 'upload-hint error'; }
+          return;
+        }
+        if (st) { st.textContent = 'Uploading…'; st.className = 'upload-hint'; }
+        var fd = new FormData();
+        fd.append('photo', fileInput.files[0]);
+        var auth = localStorage.getItem('glens_admin_token') || token;
+        fetch(API_BASE + '/photos/upload?slot=' + encodeURIComponent(key), {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + auth },
+          body: fd
+        })
+          .then(function (r) { return uploadJsonResponse(r); })
+          .then(function (data) {
+            if (input && data.url) {
+              input.value = data.url;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            if (st) { st.textContent = 'Saved to site.'; st.className = 'upload-hint success'; }
+            fileInput.value = '';
+          })
+          .catch(function (err) {
+            if (st) { st.textContent = err.message || 'Upload failed.'; st.className = 'upload-hint error'; }
+          });
+      });
+    }
+    wirePreview(input, preview, label);
+  }
+
+  function appendGallerySlotRow(parent, key, url) {
+    var label = SLOT_LABELS[key];
+    var div = document.createElement('div');
+    div.className = 'slot';
+    div.innerHTML =
+      '<label for="slot-' + key + '">' + label + '</label>' +
+      '<span class="slot-key">' + key + '</span>' +
+      '<input type="text" class="slot-url" id="slot-' + key + '" name="' + key + '" value="' + (url || '').replace(/"/g, '&quot;') + '" placeholder="Image URL, or YouTube / Vimeo / .mp4 link" autocomplete="off">' +
+      '<div class="preview" data-slot="' + key + '"></div>';
+    parent.appendChild(div);
+    var input = div.querySelector('input.slot-url');
+    var preview = div.querySelector('.preview');
+    wirePreview(input, preview, label);
+  }
+
   function loadSlots() {
     fetch(API_BASE + '/photos')
       .then(function (r) { return r.json(); })
       .then(function (slots) {
         var container = document.getElementById('photo-slots');
         container.innerHTML = '';
-        Object.keys(SLOT_LABELS).forEach(function (key) {
-          var div = document.createElement('div');
-          div.className = 'slot';
-          var label = SLOT_LABELS[key];
-          var url = slots[key] || '';
-          var canEdit = role && CAN_EDIT_PHOTOS.includes(role);
-          div.innerHTML =
-            '<label for="slot-' + key + '">' + label + '</label>' +
-            '<span class="slot-key">' + key + '</span>' +
-            (canEdit
-              ? '<div class="slot-upload">' +
-                '<input type="file" id="file-' + key + '" class="file-input" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" aria-label="Upload image for ' + label + '">' +
-                '<button type="button" class="btn btn-secondary btn-upload" data-upload-slot="' + key + '">Upload</button>' +
-                '<span class="upload-hint" data-upload-status="' + key + '"></span></div>'
-              : '') +
-            '<input type="text" class="slot-url" id="slot-' + key + '" name="' + key + '" value="' + (url || '').replace(/"/g, '&quot;') + '" placeholder="/uploads/… or https://…" autocomplete="off">' +
-            '<div class="preview" data-slot="' + key + '"></div>';
-          container.appendChild(div);
-          var input = div.querySelector('input.slot-url');
-          var fileInput = div.querySelector('input.file-input');
-          var preview = div.querySelector('.preview');
-          var uploadBtn = div.querySelector('.btn-upload');
-          if (canEdit && uploadBtn && fileInput) {
-            uploadBtn.addEventListener('click', function () {
-              var st = div.querySelector('[data-upload-status="' + key + '"]');
-              if (!fileInput.files || !fileInput.files[0]) {
-                if (st) { st.textContent = 'Choose a file first.'; st.className = 'upload-hint error'; }
-                return;
-              }
-              if (st) { st.textContent = 'Uploading…'; st.className = 'upload-hint'; }
-              var fd = new FormData();
-              fd.append('photo', fileInput.files[0]);
+        var canEdit = role && CAN_EDIT_PHOTOS.includes(role);
+
+        var mainSection = document.createElement('div');
+        mainSection.className = 'photos-subsection';
+        mainSection.innerHTML = '<h3>Website &amp; Life page (single photo each)</h3>' +
+          '<p class="hint subsection-hint">One image per slot: pick a file and click Upload, or paste a full URL below.</p>';
+        var mainInner = document.createElement('div');
+        mainSection.appendChild(mainInner);
+        MAIN_KEYS.forEach(function (key) {
+          appendSingleUploadSlot(mainInner, key, slots[key] || '', canEdit);
+        });
+        container.appendChild(mainSection);
+
+        var gridSection = document.createElement('div');
+        gridSection.className = 'photos-subsection photos-subsection-grid';
+        gridSection.innerHTML = '<h3>Life in pictures – gallery grid</h3>' +
+          '<p class="hint subsection-hint">Select <strong>multiple images</strong> (up to 26). They are applied in order: image 1 → first gallery slot, image 2 → second, and so on (same order as on the public “Life” page). You can still edit individual URLs below.</p>';
+
+        if (canEdit) {
+          var bulk = document.createElement('div');
+          bulk.className = 'life-grid-bulk';
+          bulk.innerHTML =
+            '<input type="file" id="life-grid-file-input" class="file-input" multiple accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" aria-label="Choose multiple gallery images">' +
+            '<button type="button" class="btn btn-secondary" id="life-grid-upload-btn">Upload to gallery</button>' +
+            '<span class="upload-hint" id="life-grid-bulk-status" aria-live="polite"></span>';
+          gridSection.appendChild(bulk);
+        }
+
+        var gridInner = document.createElement('div');
+        gridSection.appendChild(gridInner);
+        LIFE_GRID_KEYS.forEach(function (key) {
+          appendGallerySlotRow(gridInner, key, slots[key] || '');
+        });
+        container.appendChild(gridSection);
+
+        if (canEdit) {
+          var fileMulti = document.getElementById('life-grid-file-input');
+          var bulkBtn = document.getElementById('life-grid-upload-btn');
+          var bulkStatus = document.getElementById('life-grid-bulk-status');
+          if (bulkBtn && fileMulti && bulkStatus) {
+            bulkBtn.addEventListener('click', function () {
               var auth = localStorage.getItem('glens_admin_token') || token;
-              fetch(API_BASE + '/photos/upload?slot=' + encodeURIComponent(key), {
-                method: 'POST',
-                headers: { Authorization: 'Bearer ' + auth },
-                body: fd
-              })
-                .then(function (r) {
-                  return r.text().then(function (text) {
-                    var data = {};
-                    try { data = text ? JSON.parse(text) : {}; } catch (e) { /* ignore */ }
-                    if (r.status === 401) {
-                      showLogin();
-                      throw new Error('Session expired (e.g. after server restart). Please log in again, then upload.');
-                    }
-                    if (!r.ok) throw new Error(data.error || ('Upload failed (' + r.status + ')'));
-                    return data;
-                  });
-                })
-                .then(function (data) {
-                  if (input && data.url) {
-                    input.value = data.url;
-                    updatePreview();
-                  }
-                  if (st) { st.textContent = 'Saved to site.'; st.className = 'upload-hint success'; }
-                  fileInput.value = '';
-                })
-                .catch(function (err) {
-                  if (st) { st.textContent = err.message || 'Upload failed.'; st.className = 'upload-hint error'; }
-                });
+              uploadLifeGridBulk(fileMulti.files, auth, bulkStatus, fileMulti);
             });
           }
-          function updatePreview() {
-            var val = input.value.trim();
-            preview.innerHTML = '';
-            if (val) {
-              var absolute = val;
-              if (val.indexOf('http://') !== 0 && val.indexOf('https://') !== 0) {
-                absolute = (window.location && window.location.origin) ? (window.location.origin + (val.indexOf('/') === 0 ? val : '/' + val)) : val;
-              }
-              var img = document.createElement('img');
-              img.src = absolute;
-              img.alt = label;
-              img.onerror = function () { preview.innerHTML = '<span class="error">Invalid or blocked image</span>'; };
-              preview.appendChild(img);
-            }
-          }
-          input.addEventListener('input', updatePreview);
-          input.addEventListener('change', updatePreview);
-          updatePreview();
-        });
+        }
       });
   }
 

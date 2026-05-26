@@ -91,6 +91,7 @@
     loadSlots();
     loadSettings();
     loadContactRequests();
+    loadCvApplications();
   }
 
   var CAN_RESPOND_CONTACT = ['super_admin', 'editor', 'review_moderator'];
@@ -204,12 +205,98 @@
       });
   }
 
+  var CAN_VIEW_CVS = ['super_admin', 'editor'];
+
+  function downloadCv(id, originalName) {
+    fetch(API_BASE + '/careers/cv/' + id, {
+      headers: { Authorization: 'Bearer ' + token }
+    })
+      .then(function (r) {
+        if (!r.ok) throw new Error('Download failed');
+        return r.blob();
+      })
+      .then(function (blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = originalName || ('cv-' + id + '.pdf');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      })
+      .catch(function () {
+        alert('Failed to download CV. The file may have been removed from the server.');
+      });
+  }
+
+  function loadCvApplications() {
+    var container = document.getElementById('cv-applications-list');
+    var statusEl  = document.getElementById('cv-applications-status');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!role || !CAN_VIEW_CVS.includes(role)) {
+      container.innerHTML = '<p class="hint">Only Super Admin and Editor can view CV applications.</p>';
+      return;
+    }
+
+    if (statusEl) statusEl.textContent = 'Loading…';
+    fetch(API_BASE + '/careers/applications', { headers: { Authorization: 'Bearer ' + token } })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('Session expired');
+        if (!r.ok) throw new Error('Failed to load');
+        return r.json();
+      })
+      .then(function (list) {
+        if (statusEl) statusEl.textContent = '';
+        if (!list || list.length === 0) {
+          container.innerHTML = '<p class="hint">No applications yet.</p>';
+          return;
+        }
+        list.forEach(function (app) {
+          var card = document.createElement('div');
+          card.className = 'contact-request-card';
+          var dateStr = app.submitted_at
+            ? new Date(app.submitted_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+            : '';
+          card.innerHTML =
+            '<div class="contact-request-header">' +
+              '<strong>' + escapeHtml(app.full_name) + '</strong> ' +
+              '<span class="contact-request-meta">' + escapeHtml(app.role) + '</span>' +
+              '<span class="contact-request-date">' + escapeHtml(dateStr) + '</span>' +
+            '</div>' +
+            '<p class="contact-request-message">' +
+              escapeHtml(app.address) + ' &nbsp;·&nbsp; ' + escapeHtml(app.phone) +
+            '</p>' +
+            (app.cv_filename
+              ? '<div class="contact-request-actions">' +
+                  '<button type="button" class="btn btn-secondary btn-download-cv" data-id="' + app.id + '" data-name="' + escapeHtml(app.cv_original_name || app.cv_filename) + '">Download CV</button>' +
+                '</div>'
+              : '<p class="hint">No CV file attached.</p>');
+          container.appendChild(card);
+        });
+        container.querySelectorAll('.btn-download-cv').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            downloadCv(parseInt(btn.getAttribute('data-id'), 10), btn.getAttribute('data-name'));
+          });
+        });
+      })
+      .catch(function (err) {
+        if (err.message === 'Session expired') { showLogin(); return; }
+        if (statusEl) {
+          statusEl.textContent = err.message || 'Failed to load applications.';
+          statusEl.className = 'status error';
+        }
+      });
+  }
+
   function loadSettings() {
     fetch(API_BASE + '/settings')
       .then(function (r) { return r.json(); })
       .then(function (data) {
         var themeEl = document.getElementById('site-theme');
-        if (themeEl && (data.theme === 'original' || data.theme === 'care-uk')) {
+        if (themeEl && ['original', 'care-uk', 'good-care'].indexOf(data.theme) !== -1) {
           themeEl.value = data.theme;
         }
       })

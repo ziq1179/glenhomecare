@@ -181,6 +181,84 @@
     });
   }
 
+  // --- Careers form ---
+  var careersForm = document.getElementById('careers-form');
+  var careersStatus = document.getElementById('careers-form-status');
+
+  if (careersForm && careersStatus) {
+    careersForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var fullName = careersForm.querySelector('[name=”full_name”]');
+      var address  = careersForm.querySelector('[name=”address”]');
+      var phone    = careersForm.querySelector('[name=”phone”]');
+      var role     = careersForm.querySelector('[name=”role”]');
+      var cv       = careersForm.querySelector('[name=”cv”]');
+
+      careersStatus.textContent = '';
+      careersStatus.className = 'form-status';
+
+      if (!fullName || !fullName.value.trim()) {
+        careersStatus.textContent = 'Please enter your full name.';
+        careersStatus.classList.add('error');
+        if (fullName) fullName.focus();
+        return;
+      }
+      if (!address || !address.value.trim()) {
+        careersStatus.textContent = 'Please enter your address.';
+        careersStatus.classList.add('error');
+        address.focus();
+        return;
+      }
+      if (!phone || !phone.value.trim()) {
+        careersStatus.textContent = 'Please enter your phone number.';
+        careersStatus.classList.add('error');
+        phone.focus();
+        return;
+      }
+      if (!role || !role.value) {
+        careersStatus.textContent = 'Please select a role.';
+        careersStatus.classList.add('error');
+        role.focus();
+        return;
+      }
+      if (!cv || !cv.files || cv.files.length === 0) {
+        careersStatus.textContent = 'Please attach your CV.';
+        careersStatus.classList.add('error');
+        if (cv) cv.focus();
+        return;
+      }
+
+      var formData = new FormData();
+      formData.append('full_name', fullName.value.trim());
+      formData.append('address', address.value.trim());
+      formData.append('phone', phone.value.trim());
+      formData.append('role', role.value);
+      formData.append('cv', cv.files[0]);
+
+      var apiBase = (window.GLENS_PHOTOS_API || '').replace(/\/$/, '') || window.location.origin;
+      careersStatus.textContent = 'Submitting…';
+
+      fetch(apiBase + '/api/careers/apply', {
+        method: 'POST',
+        body: formData
+      })
+        .then(function (r) {
+          if (r.ok) return r.json();
+          return r.json().then(function (data) { throw new Error(data.error || 'Something went wrong'); });
+        })
+        .then(function () {
+          careersStatus.textContent = 'Application received — thank you. We will be in touch.';
+          careersStatus.classList.add('success');
+          careersForm.reset();
+        })
+        .catch(function (err) {
+          careersStatus.textContent = err.message || 'Something went wrong. Please try again or call us.';
+          careersStatus.classList.add('error');
+        });
+    });
+  }
+
   // --- Life in pictures: 3 rows visible, then “Show all” ---
   (function () {
     var grid = document.getElementById('life-gallery-grid');

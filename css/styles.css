@@ -6,14 +6,17 @@
    ============================================ */
 
 :root {
-  /* Primary brand – blue (header, footer, links) */
-  --primary: #0369a1;
-  --primary-hover: #0284c7;
-  --primary-dark: #075985;
+  /* Primary brand – Dark Navy (header, footer, links) */
+  --primary: #002366;
+  --primary-hover: #003f99;
+  --primary-dark: #001a4d;
 
-  /* Accent – green (CTAs, buttons) */
-  --accent: #059669;
-  --accent-hover: #047857;
+  /* Accent 1 – Light Green (CTAs, buttons) */
+  --accent: #90EE90;
+  --accent-hover: #7de07d;
+
+  /* Accent 2 – Purple (service highlights) */
+  --purple: #673AB7;
 
   /* White & backgrounds */
   --white: #ffffff;
@@ -25,8 +28,8 @@
   --text-muted: #6b7280;
 
   /* Links */
-  --link: #0284c7;
-  --link-hover: #0369a1;
+  --link: #002366;
+  --link-hover: #003f99;
 
   /* Borders */
   --border: #e5e7eb;
@@ -52,7 +55,8 @@
 
   /* Layout */
   --max-width: 1200px;
-  --header-height: 72px;
+  --nav-height: 72px;
+  --header-height: 116px; /* top bar (44px) + nav (72px) */
   --radius: 8px;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
@@ -242,7 +246,7 @@ a:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: var(--header-height);
+  min-height: var(--nav-height);
 }
 
 .logo {
@@ -355,37 +359,40 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-/* Primary buttons – green accent (original) */
+/* Primary buttons – light green accent, dark navy text (WCAG 9.5:1 contrast) */
 .btn-primary {
   background: var(--accent);
-  color: var(--white);
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
-  color: var(--white);
+  color: var(--primary);
   text-decoration: none;
 }
 
 .btn-cta {
   background: var(--accent);
-  color: var(--white);
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .btn-cta:hover {
   background: var(--accent-hover);
-  color: var(--white);
+  color: var(--primary);
   text-decoration: none;
 }
 
 .btn-secondary {
   background: var(--accent);
-  color: var(--white);
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .btn-secondary:hover {
   background: var(--accent-hover);
-  color: var(--white);
+  color: var(--primary);
   text-decoration: none;
 }
 
@@ -400,7 +407,7 @@ a:focus-visible {
 .sticky-cta .btn {
   padding: var(--space-md) var(--space-lg);
   font-size: 1.125rem;
-  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 35, 102, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -478,7 +485,7 @@ a:focus-visible {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to bottom, rgba(3, 105, 161, 0.5) 0%, rgba(3, 105, 161, 0.75) 100%);
+  background: linear-gradient(to bottom, rgba(0, 35, 102, 0.5) 0%, rgba(0, 35, 102, 0.75) 100%);
 }
 
 .hero-inner {
@@ -879,5 +886,225 @@ a:focus-visible {
   border: 0;
 }
 
+/* ============================================
+   Careers
+   ============================================ */
+
+.careers-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+}
+
+.role-badge {
+  background: var(--bg-body);
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  border-radius: 50px;
+  padding: 0.35rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.file-upload-input {
+  display: block;
+  width: 100%;
+  padding: var(--space-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-body);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.file-upload-input:hover {
+  border-color: var(--primary);
+}
+
+.file-upload-input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.form-hint {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+  margin-bottom: 0;
+}
+
 .text-center { text-align: center; }
 .mt-lg { margin-top: var(--space-lg); }
+
+/* ============================================
+   Top contact bar
+   ============================================ */
+
+.top-bar {
+  background: var(--accent);
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(0, 35, 102, 0.15);
+}
+
+.top-bar-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.55rem var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  min-height: 44px;
+}
+
+.top-bar-address {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--primary);
+}
+
+.top-bar-contacts {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-shrink: 0;
+}
+
+.top-bar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.top-bar-link:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.top-bar-whatsapp {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: #25D366;
+  color: var(--white);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.top-bar-whatsapp:hover {
+  background: #1da851;
+  color: var(--white);
+  text-decoration: none;
+}
+
+/* ============================================
+   Floating WhatsApp button (all screen sizes)
+   ============================================ */
+
+.whatsapp-float {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-md);
+  z-index: 45;
+  background: #25D366;
+  color: var(--white);
+  border-radius: 50px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.whatsapp-float:hover {
+  background: #1da851;
+  color: var(--white);
+  text-decoration: none;
+  transform: scale(1.04);
+  box-shadow: 0 6px 24px rgba(37, 211, 102, 0.6);
+}
+
+.whatsapp-float:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Facilities icon grid
+   ============================================ */
+
+.facilities-grid {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-lg) 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm) var(--space-md);
+}
+
+.facility-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-content);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.facility-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+@media (max-width: 900px) {
+  .facilities-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .facilities-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile overrides */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 72px; /* top bar hidden on mobile */
+  }
+
+  .top-bar {
+    display: none;
+  }
+
+  /* Stack WhatsApp float above the Call sticky CTA */
+  .whatsapp-float {
+    bottom: 6.5rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.9375rem;
+  }
+}

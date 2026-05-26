@@ -12,6 +12,10 @@ server/.env
 uploads/*
 !uploads/.gitkeep
 
+# CV uploads — personal data, never commit
+cv-uploads/*
+!cv-uploads/.gitkeep
+
 # Site photos (JPEG/PNG/WebP): use Cloudinary (or similar) + Admin URLs — do not commit
 images/**/*.jp*g
 images/**/*.png

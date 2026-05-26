@@ -38,8 +38,9 @@
         <div class="theme-row">
           <label for="site-theme">Theme</label>
           <select id="site-theme" aria-describedby="theme-hint">
-            <option value="original">Original (blue header &amp; footer, green buttons)</option>
-            <option value="care-uk">Care UK style (white header, green/teal, dark footer)</option>
+            <option value="original">Original (dark navy header, light-green buttons)</option>
+            <option value="care-uk">Care UK (white header, teal/green, grey footer)</option>
+            <option value="good-care">Good Care (white nav, deep teal &amp; sage, dark footer)</option>
           </select>
           <button type="button" id="save-theme-btn" class="btn btn-secondary">Save theme</button>
         </div>
@@ -55,11 +56,18 @@
       </form>
       <p id="save-status" class="status" role="status" aria-live="polite"></p>
       </section>
-      <section class="admin-section" aria-labelledby="contact-requests-heading">
-        <h2 id="contact-requests-heading">Contact / Visit requests</h2>
-        <p class="hint">Messages from the “Book a Visit” form. View and mark as responded.</p>
-        <div id="contact-requests-list" class="contact-requests-list"></div>
-        <p id="contact-requests-status" class="status" role="status" aria-live="polite"></p>
+      <section class=”admin-section” aria-labelledby=”contact-requests-heading”>
+        <h2 id=”contact-requests-heading”>Contact / Visit requests</h2>
+        <p class=”hint”>Messages from the “Book a Visit” form. View and mark as responded.</p>
+        <div id=”contact-requests-list” class=”contact-requests-list”></div>
+        <p id=”contact-requests-status” class=”status” role=”status” aria-live=”polite”></p>
+      </section>
+
+      <section class=”admin-section” aria-labelledby=”cv-applications-heading”>
+        <h2 id=”cv-applications-heading”>CV Applications (Careers)</h2>
+        <p class=”hint”>CVs submitted via the Careers form. Only Super Admin and Editor can view and download.</p>
+        <div id=”cv-applications-list” class=”contact-requests-list”></div>
+        <p id=”cv-applications-status” class=”status” role=”status” aria-live=”polite”></p>
       </section>
     </main>
   </div>
